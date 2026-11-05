@@ -1,6 +1,6 @@
 ---
 title: "Health Insurance Pricing"
-subtitle: "Replace with one sentence that tells readers why the question matters"
+subtitle: "How do health factors affect health insurance pricing?"
 author: "Benjamin Bagley, Mason Keep, and Brian Taylor"
 date: last-modified
 description: "A multiple linear regression approach to analyzing factors affecting health insurance costs for individuals."
