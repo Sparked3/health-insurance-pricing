@@ -26,6 +26,13 @@ We expect smoking status to be one of the strongest predictors of healthcare cha
 
 ```{r}
 # Load packages and data, document preparation, and fit the baseline.
+library(tidyverse)
+library(vroom)
+# insurance.csv is from
+# https://www.kaggle.com/datasets/d3lhomi10/medical-cost-personal-dataset
+insurance_data <- vroom("insurance.csv")
+insurance_fit <- lm(charges ~ bmi + smoker, data = insurance_data)
+summary(insurance_fit)
 ```
 
 ```{r}
