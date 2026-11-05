@@ -76,6 +76,6 @@ Details are in the [AI-use record](ai-use.qmd).
 ## Data and code
 
 - **Data:** Replace with a working source link or citation and any brief acquisition note needed to reproduce the project.
-- **Repository:** Replace with your repository URL.
+- **Repository:** https://github.com/Sparked3/health-insurance-pricing
 - [AI-use record](ai-use.qmd)
 - **Other sources:** Cite package documentation, articles, code, and other sources that materially informed the work.
