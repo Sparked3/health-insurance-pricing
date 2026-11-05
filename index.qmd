@@ -1,9 +1,9 @@
 ---
-title: "Replace with a specific, informative title"
+title: "Health Insurance Pricing"
 subtitle: "Replace with one sentence that tells readers why the question matters"
-author: "Replace with all group members' names"
+author: "Benjamin Bagley, Mason Keep, and Brian Taylor"
 date: last-modified
-description: "Replace with a brief description for link previews."
+description: "A multiple linear regression approach to analyzing factors affecting health insurance costs for individuals."
 ---
 
 **Narrative word count:** Replace with a number from 750 to 1,000.
@@ -15,6 +15,10 @@ This template suggests one way to tell the story. You may rename, combine, or re
 ## The question
 
 **In one or two short paragraphs, introduce the setting, audience, focused research question, data source, observational unit, response, important predictors, and one important data limitation. Lead with what makes the question worth answering.**
+
+How is the amount spent on healthcare related to age, sex, BMI, number of children, smoking status, and region of the United States you life in? This study is for those setting health insurance pricing so that they can better understand the effect of these factors on the amount of health insurance a policyholder will need. Understanding these relationships can help insurance companies make more informed decisions when determining insurance premiums and help policyholders identify factors associated with higher healthcare costs. The data comes from the `insurance.csv` dataset, originally published in Brett Lantz’s Machine Learning with R and available through Kaggle. The observational unit is one individual, with a total of 1,338 individuals and seven variables. The response variable is `charges`, which represents the total annual healthcare charges for each individual. The six candidate predictors are `age`, `sex`, `bmi`, `children`, `smoker`, and `region`.
+
+We expect smoking status to be one of the strongest predictors of healthcare charges, with age and BMI also likely to have important associations. Identifying these relationships may help insurance companies better understand healthcare costs when setting premiums and help policyholders recognize factors associated with higher insurance expenses. However, an important limitation is that the dataset is observational and provides limited information about its original data collection process. Therefore, we can identify associations between these variables and healthcare charges, but we cannot conclude that any of these factors directly cause healthcare costs to increase or decrease.
 
 ## What the baseline shows
 
