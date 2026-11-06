@@ -37,6 +37,7 @@ summary(insurance_fit)
 
 ```{r}
 # Show a primary figure or table only if it helps answer the question.
+ggplot(data = insurance_data, aes(x = age, y = charges, color = smoker)) + geom_point()
 ```
 
 ## Going beyond the baseline
