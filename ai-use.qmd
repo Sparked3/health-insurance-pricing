@@ -4,41 +4,9 @@ description: "A concise record of AI-supported work on this project."
 author: "Benjamin Bagley, Mason Keep, and Brian Taylor"
 ---
 
-This page is a work log, not a second report. Short bullets are welcome. It is separate from the final case study and does not count toward the 750 to 1,000 word range.
-
-## Starting point
-
-**AI system and date:** ChatGPT, 11/9/2026
-
-**Before using AI for the required extension, briefly state your question, course-based core model, baseline result, and the specific limitation or opportunity you wanted to address.**
-
-> Our question is how is the amount spent on healthcare related to age, sex, BMI, number of children, smoking status, and region of the United States you life in? We are using a multiple linear regression model. The baseline result is that smoking, BMI, number of children, and age all are associated with significant changes in yearly healthcare charges. We wanted to see which predictors were the most important in predicting healthcare charges. Though we could use a best-subsets selection or use the VIFs of each variable to get an idea of which matters most, we wanted to directly compare each variable's importance on the same baseline. A model selection search will tell us which variables should be included, but not rank and measure their importance. 
-
-## Substantive prompts
-
-Paste the exact prompts that shaped the extension. Include the customized extension-selection prompt from the checkpoint and any important implementation follow-ups. Delete unused prompt blocks.
-
-> I am creating a regression case study in R and Quarto. My project proposal details are attached. I found this limitation or opportunity: when I plot every variable as an interaction between itself, there are only upside-down crosses in the added-variable plots. Suggest three feasible extensions that keep the core analysis connected to regression methods taught in my class. One option may be a model not taught in class used as a comparator. For each, explain how it strengthens the same research question, how its result would enter the final case study, the implementation steps, and two ways I could verify it. Do not choose for me.
-
-> AI-supported extension: After your preliminary course-based analysis, use AI to help implement one extension. The extension must respond to your findings, improve the analysis or its communication, and appear substantively in the final case-study page. It cannot replace the baseline model or the two required STAT 330 elements, and it cannot shift the project away from the course’s regression focus. (also pasted in the whole project description for context).
-
-> tell me more about options a and c
-
-> help me implement option c into my project
-
-## My decisions
-
-- **Accepted:** What useful advice did you use? We used ChatGPT's advice for what extension may work well. We used the most of the advice it had for implementation and the code it gave us to create the permutation importance feature. We used the graphic and simulation it made to create the permutation feature.
-- **Changed:** We adapted the code to be functional and relevant to our model. We added units to our graphics.
-- **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong? There was a bug in the code ChatGPT generated for us; it had used the keyword `repeat` as a variable name, which created in syntax error. It created two "independent checks" for us as well, which we did not use because our checks would not be independent if we were to use them. 
-
-**Connection to the final case study:** Identify where the extension's method and result appear on the final page and how they strengthen the course-based analysis.
-Our extension is in the section labeled "A new direction with AI" on the main report page. 
-
-## Independent verification
-
-1. If our extension shows that smoking, age, and BMI are significantly more important than the other predictors, than a LASSO shrinkage should reasonably select those same predictors. 
 ```{r}
+#| message: false
+#| echo: false
 # Code to import data, for reference
 library(tidyverse)
 library(vroom)
@@ -54,19 +22,46 @@ insurance_data$bmi_group <- as.factor(cut(
   labels = c("Normal", "Overweight", "Obese")
 ))
 
-library(glmnet)
-# make a model matrix and remove the intercept column
-x <- model.matrix(charges ~ . - bmi_group, data = insurance_data)[, -1]
-y <- insurance_data$charges
-
-# do a lasso regression (alpha = 1)
-lasso <- cv.glmnet(x, y, family = "gaussian", alpha = 1)
-coef(lasso)
 ```
 
-This lasso regression keeps the coefficients for `age`, `bmi`, and `smoker`. This checks that the AI's importance ranking is correct. The LASSO regression also gave `smoker` the largest coefficient, which matches the AI response that `smoker` is the most important coefficient. However, this check also shows why a LASSO regression or other model selection method is not sufficient for ranking the importance of coefficients, because `age` and `bmi` are given almost the same final coefficient whereas the actual importance ranking puts `age` significantly above `bmi`. Because the coefficients are not all on the same scale, we cannot simply compare them to see which matters most for prediction, though `smoker` being much larger than `age` and `bmi` points towards it being the most important coefficient. 
+## Starting point
 
-2. We can use $R^2$ to explore which variables are the most important. We can fit partial models, each one dropping one of our predictors, and see how much the $R^2$ drops when we drop each variable. 
+**AI system and date:** ChatGPT, 11/9/2026
+
+> How is the amount spent on healthcare related to age, sex, BMI, number of children, smoking status, and region of the United States you live in? We are using a multiple linear regression model. The baseline result is that smoking, BMI, number of children, and age all are associated with significant changes in yearly healthcare charges. We wanted to see which predictors were the most important in predicting healthcare charges. Though we could use a best-subsets selection to get an idea of which matters most, we wanted to directly compare each variable's importance on the same baseline. A model selection search will tell us which variables should be included, but not rank and measure their importance. 
+
+## Substantive prompts
+
+> I am creating a regression case study in R and Quarto. My project proposal details are attached. I found this limitation or opportunity: when I plot every variable as an interaction between itself, there are only upside-down crosses in the added-variable plots. Suggest three feasible extensions that keep the core analysis connected to regression methods taught in my class. One option may be a model not taught in class used as a comparator. For each, explain how it strengthens the same research question, how its result would enter the final case study, the implementation steps, and two ways I could verify it. Do not choose for me.
+
+> AI-supported extension: After your preliminary course-based analysis, use AI to help implement one extension. The extension must respond to your findings, improve the analysis or its communication, and appear substantively in the final case-study page. It cannot replace the baseline model or the two required STAT 330 elements, and it cannot shift the project away from the course’s regression focus. (also pasted in the whole project description for context).
+
+> tell me more about options a and c
+
+> help me implement option c into my project
+
+## My decisions
+
+- **Accepted:** We used ChatGPT's advice for what extension may work well. We used most of the advice it had for implementation and the code it gave us to create the permutation importance feature. We used the graphic and simulation it made to create the permutation feature.
+- **Changed:** We adapted the code to be functional and relevant to our model. We added units to our graphics.
+- **Rejected or corrected:** There was a bug in the code ChatGPT generated for us; it had used the keyword `repeat` as a variable name, which caused a syntax error. It created two "independent checks" for us as well, which we did not use because we wanted to check its work independently.  
+
+**Connection to the final case study:** Our extension is in the section labeled "A new direction with AI" on the main report page. 
+
+## Independent verification
+
+1. If our extension shows that smoking, age, and BMI are substantially more important than the other predictors, than a best-subsets selection using BIC should hopefully select those same predictors. 
+```{r}
+bestglm::bestglm(
+    insurance_data |> select(-bmi_group) |> as.data.frame(), 
+    TopModels = 5,
+    IC = "BIC"
+)$BestModels
+```
+
+> This best-subsets BIC selection selects `age`, `bmi`, `children`, and `smoker`. This is some weak evidence that the AI's importance ranking is correct, as these are the top 4 predictors, but this best-subsets search does not rank the predictors in any way. This is why a best-subsets selection or other model selection method is not sufficient for ranking the importance of predictors, because the only information we get is if a variable should be included or not, whereas the AI's importance ranking assigns values to each predictor which we can use to rank and compare them. Because we only get a `TRUE` or `FALSE` for each predictor, we cannot say which matters most for prediction with a normal model selection search algorithm.
+
+2. We can use $R^2$ to explore which variables are the most important. We can fit partial models, each one dropping one of our predictors, and see how much the $R^2$ decreases when we drop each variable. 
 
 ```{r}
 partial1 <- lm(charges ~ . - age - bmi_group, data = insurance_data)
@@ -85,23 +80,18 @@ adj.r.squareds <- c(
     glance(partial6)$adj.r.squared
 )
 
-r.squareds <- tibble(
-    model = c("Age", "Sex", "BMI", "Children", "Smoker", "Region"),
-    adj.r.squared.delta = glance(insurance_fit)$adj.r.squared - adj.r.squareds
+results.chart <- tibble(
+    `Dropped Predictor` = c("Age", "Sex", "BMI", "Children", "Smoker", "Region"),
+    `Drop in adjusted R^2` = glance(insurance_fit)$adj.r.squared - adj.r.squareds
 )
-knitr::kable(r.squareds)
+knitr::kable(results.chart)
 ```
 
-This table lists the change in adjusted $R^2$, where a positive number means a drop in adjusted $R^2$. Omitting each of the variables caused a drop in $R^2$ except for sex, however the drop due to omitting region, children, and sex were all very small (<.003). This also reinforces the AI work, showing that age, BMI, and especially smoker have a significant impact on the predictions. $R^2$ is also nice because it is quantifiable. The change in $R^2$ is the change in the percentage of variation that the model explains. So, we can see that removing `smoker` causes the amount of variation explained to drop by nearly 63%, removing `age` and `bmi` cause the amount of explained variation to drop by about 9% and 3% respectively, while removing `sex`, `children`, or `region` only cause a drop of less than .3% each, or even an increase in the case of `sex`. 
+This table lists the change in adjusted $R^2$, where a positive number means a drop in adjusted $R^2$. Omitting each of the variables caused a drop in adjusted $R^2$ except for sex, however the drop due to omitting region, children, and sex were all very small (<.003). This also reinforces the AI work, showing that age, BMI, and especially smoking status have a significant impact on the predictions. $R^2$ is also nice because it is quantifiable. The change in $R^2$ is the change in the percentage of variation that the model explains when we add that predictor. So, we can see that removing `smoker` causes the amount of variation explained to drop by nearly 63%, removing `age` and `bmi` cause the amount of explained variation to drop by about 9% and 3% respectively, while removing `sex`, `children`, or `region` cause a drop of less than .3% each, or even an increase in the case of `sex`. 
 
 ## Remaining limitation
-
-**State one important uncertainty, failure mode, or limitation that remains.**
-
-One limitation that remains is that that coorelation does not mean causation. We're modeling the impact of `sex`, `children`, `smoker`, `BMI`, `age`, and `region`, but there are other factors that could be impacting insurance pricing that the data doesn't show. An example of this could be previous medical history or disabilities that can influence the price. 
+One limitation that remains is that that correlation does not mean causation. We're modeling the impact of `sex`, `children`, `smoker`, `BMI`, `age`, and `region`, but there are other factors that could be impacting insurance pricing that the data doesn't show. An example of this could be previous medical history or disabilities that can influence the price. Even though the permutation importance simulation, the best-subsets selection using BIC, and the drop in $R^2$ all show that `smoker` can explain a lot of the variation in healthcare charges, we cannot conclude that healthcare charges are increased by smoking. 
 
 ## Other AI use, if any
-
-**Briefly disclose earlier debugging, proofreading, or other AI assistance. Write “None” if there was no other use.**
 
 We used AI to proofread. We also used it to debug code and understand errors in it. We also used it to help with the coding where appropriate, i.e. remembering how to code a lasso regression in R, how to make plots look nicer, etc. 

@@ -22,6 +22,7 @@ We expect smoking status to be one of the strongest predictors of healthcare cha
 
 ## What the baseline shows
 
+The data is fairly linear, so we will fit a linear baseline model with all of our predictors. 
 **Describe and justify a simple course-based baseline regression model. Interpret the result that best establishes the rest of the story, including its direction, magnitude, scale, and uncertainty. Explain one limitation or unresolved pattern that motivates deeper analysis.**
 
 ```{r}
@@ -102,13 +103,22 @@ It is clear from these plots that healthcare charges increase with age, and that
 **Present a method from a different family and its most useful evidence. Combine this with the preceding subsection if that creates a clearer story.**
 Which predictors matter most to prediction?
 ```{r}
-# Use a shrinkage method to select from our variables
+library(glmnet)
+# make a model matrix and remove the intercept column
+x <- model.matrix(charges ~ . - bmi_group, data = insurance_data)[, -1]
+y <- insurance_data$charges
+
+# do a lasso regression (alpha = 1)
+lasso <- cv.glmnet(x, y, family = "gaussian", alpha = 1)
+coef(lasso)
 ```
 
 **** This should flow nicely into the AI extension
+
 ## A new direction with AI
 
-**Explain the need revealed by your preliminary course-based work, the extension you implemented with AI support, and what it contributes to the same research question. Show its substantive result on this page and summarize your independent checks. If the extension is an untaught comparator, evaluate it against the core course-based model. Link to the AI-use record instead of placing a transcript here.**
+We want to decide which predictors impact the predictions of healthcare charges the most. We are going to use ask AI about the best way to make this comparison. It returned a method of ranking each predictor and assigning them levels of importance by randomly permuting each variable and checking to see how much the cross validated RMSE changes. This procedure will extend what our LASSO regression found, by hopefully confirming which the most important variables are, but also by giving each predictor a measure of importance in the same units. This will show us how strongly each of our predictors is related to healthcare charges. To check this work, we will also fit a BIC best-subsets model because it should select the same predictors if they are truly the most important. We will also compare the $R^2$ values for the full baseline model to the $R^2$ from models with all of the predictors except one. If the variables found to be the most important by the AI's simulation are truly the most important, then the drop in $R^2$ should be the largest for the most important predictors. 
+
 
 ```{r}
 # Implement the verified extension or show its most useful result.
@@ -221,9 +231,13 @@ importance_summary <- importance_results %>%
 importance_summary
 ```
 
-Independent Checks
-
 ```{r}
+#| eval: false
+#| echo: false
+#| message: false
+# I think these checks aren't what they meant by independent checks. Let's just comment it out for now and we can bring it back if this was correct. 
+
+
 # check 1
 
 first_split <- folds$splits[[1]]
