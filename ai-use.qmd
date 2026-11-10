@@ -28,10 +28,10 @@ Paste the exact prompts that shaped the extension. Include the customized extens
 
 ## My decisions
 
-- **Accepted:** What useful advice did you use?
-- **Changed:** What did you adapt to fit your data or goals?
-- **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong?
-****these things too maybe^^^^
+- **Accepted:** What useful advice did you use? We used ChatGPT's advice for what extension may work well. We used the most of the advice it had for implementation and the code it gave us to create the permutation importance feature. We used the graphic and simulation it made to create the permutation feature.
+- **Changed:** We adapted the code to be functional and relevant to our model. We added units to our graphics.
+- **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong? There was a bug in the code ChatGPT generated for us; it had used the keyword `repeat` as a variable name, which created in syntax error. It created two "independent checks" for us as well, which we did not use because it would not be independent if we were to use them. 
+
 **Connection to the final case study:** Identify where the extension's method and result appear on the final page and how they strengthen the course-based analysis.
 Our extension is in the section labeled "A new direction with AI" on the main report page. 
 
@@ -39,6 +39,21 @@ Our extension is in the section labeled "A new direction with AI" on the main re
 
 1. If our extension shows that smoking, age, and BMI are significantly more important than the other predictors, than a LASSO shrinkage should reasonably select those same predictors. 
 ```{r}
+# Code to import data, for reference
+library(tidyverse)
+library(vroom)
+library(broom)
+# insurance.csv is from
+# https://www.kaggle.com/datasets/d3lhomi10/medical-cost-personal-dataset
+insurance_data <- vroom("insurance.csv") %>% 
+  mutate(across(c(sex, smoker, region), as.factor))
+insurance_fit <- lm(charges ~ ., data = insurance_data)
+insurance_data$bmi_group <- as.factor(cut(
+  insurance_data$bmi,
+  breaks = c(0, 25, 30, Inf),
+  labels = c("Normal", "Overweight", "Obese")
+))
+
 library(glmnet)
 # make a model matrix and remove the intercept column
 x <- model.matrix(charges ~ . - bmi_group, data = insurance_data)[, -1]

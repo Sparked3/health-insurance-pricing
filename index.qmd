@@ -30,14 +30,16 @@ library(tidyverse)
 library(vroom)
 # insurance.csv is from
 # https://www.kaggle.com/datasets/d3lhomi10/medical-cost-personal-dataset
-insurance_data <- vroom("insurance.csv") |> mutate(across(c(sex, smoker, region), as.factor))
+insurance_data <- vroom("insurance.csv") %>% 
+  mutate(across(c(sex, smoker, region), as.factor))
 insurance_fit <- lm(charges ~ ., data = insurance_data)
 summary(insurance_fit)
 ```
 
 ```{r}
 # Show a primary figure or table only if it helps answer the question.
-ggplot(data = insurance_data, aes(x = age, y = charges, color = smoker)) + geom_point()
+ggplot(data = insurance_data, aes(x = age, y = charges, color = smoker)) + 
+  geom_point()
 
 
 insurance_data$bmi_group <- as.factor(cut(
@@ -74,10 +76,10 @@ ggplot(insurance_data, aes(x = age, y = charges)) +
         )
     ) + 
     labs(
-    title = "Insurance Charges by Age, BMI, and Smoking Status",
-    x = "Age",
-    y = "Insurance Charges"
-  )
+      title = "Insurance Charges by Age, BMI, and Smoking Status",
+      x = "Age (Years)",
+      y = "Insurance Charges ($)"
+    )
 ```
 
 It is clear from these plots that healthcare charges increase with age, and that smokers generally spend more per year for healthcare. BMI doesn't seem to have as much of an effect as expected, however it seems to have an interaction with smoking status. Healthcare costs seem to stay mostly the same as BMI increases except for the group of individuals who are smokers and obese. Smokers in the normal and overweight BMI categories seem to be charged about $15000 more per year across the age levels recorded, but obese smokers are charged about $35000 more on average across all age levels. 
@@ -193,7 +195,7 @@ importance_results <- map2_dfr(
 
         tibble(
           fold = folds$id[i],
-          repeat1 = folds$id2[i],
+          repeat_id = folds$id2[i],
           variable = variable,
           original_rmse = original_rmse,
           permutation = seq_len(n_permutations),
@@ -307,7 +309,7 @@ ggplot(
   theme_minimal()
 ```
 
-Details are in the [AI-use record](ai-use.qmd). 
+Details are in the [AI-use record](ai-use.qmd).
 
 ## What this means
 
