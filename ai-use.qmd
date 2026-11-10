@@ -98,6 +98,8 @@ This table lists the change in adjusted $R^2$, where a positive number means a d
 
 **State one important uncertainty, failure mode, or limitation that remains.**
 
+One limitation that remains is that that coorelation does not mean causation. We're modeling the impact of `sex`, `children`, `smoker`, `BMI`, `age`, and `region`, but there are other factors that could be impacting insurance pricing that the data doesn't show. An example of this could be previous medical history or disabilities that can influence the price. 
+
 ## Other AI use, if any
 
 **Briefly disclose earlier debugging, proofreading, or other AI assistance. Write “None” if there was no other use.**
