@@ -44,3 +44,5 @@ Link or cite verification sources where appropriate. A second AI response does n
 **Briefly disclose earlier debugging, proofreading, or other AI assistance. Write “None” if there was no other use.**
 
 We used AI to proofread.
+We used AI to help figure out how to use git and github.
+
