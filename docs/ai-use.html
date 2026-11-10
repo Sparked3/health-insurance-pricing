@@ -2844,7 +2844,7 @@ window.Quarto = {
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>partial1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(charges <span class="sc">~</span> . <span class="sc">-</span> age <span class="sc">-</span> bmi_group, <span class="at">data =</span> insurance_data)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>partial2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(charges <span class="sc">~</span> . <span class="sc">-</span> sex <span class="sc">-</span> bmi_group, <span class="at">data =</span> insurance_data)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>partial3<span class="ot">&lt;-</span> <span class="fu">lm</span>(charges <span class="sc">~</span> . <span class="sc">-</span> bmi <span class="sc">-</span> bmi_group, <span class="at">data =</span> insurance_data)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>partial3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(charges <span class="sc">~</span> . <span class="sc">-</span> bmi <span class="sc">-</span> bmi_group, <span class="at">data =</span> insurance_data)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>partial4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(charges <span class="sc">~</span> . <span class="sc">-</span> children <span class="sc">-</span> bmi_group, <span class="at">data =</span> insurance_data)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>partial5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(charges <span class="sc">~</span> . <span class="sc">-</span> smoker <span class="sc">-</span> bmi_group, <span class="at">data =</span> insurance_data)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>partial6 <span class="ot">&lt;-</span> <span class="fu">lm</span>(charges <span class="sc">~</span> . <span class="sc">-</span> region <span class="sc">-</span> bmi_group, <span class="at">data =</span> insurance_data)</span>
@@ -2861,8 +2861,9 @@ window.Quarto = {
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>results.chart <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Dropped Predictor</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Sex&quot;</span>, <span class="st">&quot;BMI&quot;</span>, <span class="st">&quot;Children&quot;</span>, <span class="st">&quot;Smoker&quot;</span>, <span class="st">&quot;Region&quot;</span>),</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Drop in adjusted R^2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">glance</span>(insurance_fit)<span class="sc">$</span>adj.r.squared <span class="sc">-</span> adj.r.squareds</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(results.chart)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">Drop in adjusted R^2</span><span class="st">`</span>))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(results.chart)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -2874,12 +2875,12 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Age</td>
-<td style="text-align: right;">0.0876079</td>
+<td style="text-align: left;">Smoker</td>
+<td style="text-align: right;">0.6275903</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Sex</td>
-<td style="text-align: right;">-0.0001591</td>
+<td style="text-align: left;">Age</td>
+<td style="text-align: right;">0.0876079</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BMI</td>
@@ -2890,18 +2891,18 @@ window.Quarto = {
 <td style="text-align: right;">0.0020549</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Smoker</td>
-<td style="text-align: right;">0.6275903</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Region</td>
 <td style="text-align: right;">0.0006306</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sex</td>
+<td style="text-align: right;">-0.0001591</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>This table lists the change in adjusted <span class="math inline">\(R^2\)</span>, where a positive number means a drop in adjusted <span class="math inline">\(R^2\)</span>. Omitting each of the variables caused a drop in adjusted <span class="math inline">\(R^2\)</span> except for sex, however the drop due to omitting region, children, and sex were all very small (&lt;.003). This also reinforces the AI work, showing that age, BMI, and especially smoking status have a significant impact on the predictions. <span class="math inline">\(R^2\)</span> is also nice because it is quantifiable. The change in <span class="math inline">\(R^2\)</span> is the change in the percentage of variation that the model explains when we add that predictor. So, we can see that removing <code>smoker</code> causes the amount of variation explained to drop by nearly 63%, removing <code>age</code> and <code>bmi</code> cause the amount of explained variation to drop by about 9% and 3% respectively, while removing <code>sex</code>, <code>children</code>, or <code>region</code> cause a drop of less than .3% each, or even an increase in the case of <code>sex</code>.</p>
+<p>This table lists the change in adjusted <span class="math inline">\(R^2\)</span>, where a positive number means a drop in adjusted <span class="math inline">\(R^2\)</span>. Omitting each of the variables caused a drop in adjusted <span class="math inline">\(R^2\)</span> except for sex, however the drop due to omitting region, children, and sex were all very small (&lt;.003). This also reinforces the AI work, showing that age, BMI, and especially smoking status have a significant impact on the accuracy of the predictions. <span class="math inline">\(R^2\)</span> is also nice because it is quantifiable. The change in <span class="math inline">\(R^2\)</span> is the change in the percentage of variation that the model explains when we add that predictor. So, we can see that removing <code>smoker</code> causes the amount of variation explained to drop by nearly 63%, removing <code>age</code> and <code>bmi</code> cause the amount of explained variation to drop by about 9% and 3% respectively, while removing <code>sex</code>, <code>children</code>, or <code>region</code> cause a drop of less than .3% each, or even an increase in the case of <code>sex</code>.</p>
 </section>
 <section id="remaining-limitation" class="level2">
 <h2 class="anchored" data-anchor-id="remaining-limitation">Remaining limitation</h2>
