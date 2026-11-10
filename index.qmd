@@ -102,6 +102,201 @@ ggplot(insurance_data, aes(x = age, y = charges)) +
 
 ```{r}
 # Implement the verified extension or show its most useful result.
+
+library(tidymodels)
+
+set.seed(502340)
+
+folds <- vfold_cv(
+  insurance_data,
+  v = 10,
+  repeats = 5
+)
+
+# Predictors to investigate
+predictors <- c(
+  "age",
+  "sex",
+  "bmi",
+  "children",
+  "smoker",
+  "region"
+)
+
+# Number of random permutations
+n_permutations <- 30
+
+# Calculate permutation importance
+
+importance_results <- map2_dfr(
+  folds$splits,
+  seq_along(folds$splits),
+
+  function(split, i) {
+
+    # Separate training and assessment observations
+    train_data <- analysis(split)
+    test_data <- assessment(split)
+
+    # Fit regression using training observations
+    model <- lm(
+      charges ~ age + sex + bmi +
+        children + smoker + region,
+      data = train_data
+    )
+
+    # Original predictions and RMSE
+    original_predictions <- predict(
+      model,
+      newdata = test_data
+    )
+
+    original_rmse <- rmse_vec(
+      truth = test_data$charges,
+      estimate = original_predictions
+    )
+
+    # Shuffle each predictor independently
+    map_dfr(
+      predictors,
+
+      function(variable) {
+
+        shuffled_rmse <- replicate(
+          n_permutations,
+
+          {
+            shuffled_data <- test_data
+
+            shuffled_data[[variable]] <-
+              sample(shuffled_data[[variable]])
+
+            predictions <- predict(
+              model,
+              newdata = shuffled_data
+            )
+
+            rmse_vec(
+              truth = test_data$charges,
+              estimate = predictions
+            )
+          }
+        )
+
+        tibble(
+          fold = folds$id[i],
+          repeat1 = folds$id2[i],
+          variable = variable,
+          original_rmse = original_rmse,
+          permutation = seq_len(n_permutations),
+          shuffled_rmse = shuffled_rmse,
+          importance = shuffled_rmse - original_rmse
+        )
+      }
+    )
+  }
+)
+
+
+importance_summary <- importance_results %>%
+  group_by(variable) %>%
+  summarise(
+    mean_importance = mean(importance),
+    sd_importance = sd(importance),
+    median_importance = median(importance),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(mean_importance))
+
+importance_summary
+```
+
+Independent Checks
+
+```{r}
+# check 1
+
+first_split <- folds$splits[[1]]
+
+train_check <- analysis(first_split)
+test_check <- assessment(first_split)
+
+check_model <- lm(
+  charges ~ age + sex + bmi +
+    children + smoker + region,
+  data = train_check
+)
+
+check_predictions <- predict(
+  check_model,
+  newdata = test_check
+)
+
+# Method 1: yardstick
+rmse_package <- rmse_vec(
+  truth = test_check$charges,
+  estimate = check_predictions
+)
+
+# Method 2: manual calculation
+rmse_manual <- sqrt(
+  mean(
+    (test_check$charges -
+       check_predictions)^2
+  )
+)
+
+rmse_package
+rmse_manual
+
+all.equal(rmse_package, rmse_manual)
+
+# check 2
+
+model_without_smoker <- lm(
+  charges ~ age + sex + bmi +
+    children + region,
+  data = train_check
+)
+
+predictions_without_smoker <- predict(
+  model_without_smoker,
+  newdata = test_check
+)
+
+rmse_without_smoker <- rmse_vec(
+  truth = test_check$charges,
+  estimate = predictions_without_smoker
+)
+
+rmse_full_model <- rmse_vec(
+  truth = test_check$charges,
+  estimate = check_predictions
+)
+
+rmse_full_model
+rmse_without_smoker
+```
+
+Final Visualization
+
+```{r}
+ggplot(
+  importance_summary,
+  aes(
+    x = reorder(variable, mean_importance),
+    y = mean_importance
+  )
+) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Which Variables Matter Most for Predicting Healthcare Charges?",
+    subtitle = "Repeated cross-validated permutation importance",
+    x = "Predictor",
+    y = "Increase in RMSE ($)"
+  ) +
+  theme_minimal()
 ```
 
 Details are in the [AI-use record](ai-use.qmd).

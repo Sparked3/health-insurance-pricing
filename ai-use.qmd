@@ -8,24 +8,30 @@ This page is a work log, not a second report. Short bullets are welcome. It is s
 
 ## Starting point
 
-**AI system and date:** ChatGPT `r format(file.info(knitr::current_input())$mtime, "%B %d, %Y")`
+**AI system and date:** ChatGPT, 11/9/2026
 
 **Before using AI for the required extension, briefly state your question, course-based core model, baseline result, and the specific limitation or opportunity you wanted to address.**
+
+****we probably should do this before submitting ^^^
 
 ## Substantive prompts
 
 Paste the exact prompts that shaped the extension. Include the customized extension-selection prompt from the checkpoint and any important implementation follow-ups. Delete unused prompt blocks.
 
-> Replace with an exact prompt.
+> I am creating a regression case study in R and Quarto. My project proposal details are attached. I found this limitation or opportunity: when I plot every variable as an interaction between itself, there are only upside-down crosses in the added-variable plots. Suggest three feasible extensions that keep the core analysis connected to regression methods taught in my class. One option may be a model not taught in class used as a comparator. For each, explain how it strengthens the same research question, how its result would enter the final case study, the implementation steps, and two ways I could verify it. Do not choose for me.
 
-> Replace with another exact prompt, if needed.
+> AI-supported extension: After your preliminary course-based analysis, use AI to help implement one extension. The extension must respond to your findings, improve the analysis or its communication, and appear substantively in the final case-study page. It cannot replace the baseline model or the two required STAT 330 elements, and it cannot shift the project away from the course’s regression focus. (also pasted in the whole project description for context).
+
+> tell me more about options a and c
+
+> help me implement option c into my project
 
 ## My decisions
 
 - **Accepted:** What useful advice did you use?
 - **Changed:** What did you adapt to fit your data or goals?
 - **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong?
-
+****these things too maybe^^^^
 **Connection to the final case study:** Identify where the extension's method and result appear on the final page and how they strengthen the course-based analysis.
 
 ## Independent verification
@@ -43,4 +49,4 @@ Link or cite verification sources where appropriate. A second AI response does n
 
 **Briefly disclose earlier debugging, proofreading, or other AI assistance. Write “None” if there was no other use.**
 
-We used AI to proofread.
+We used AI to proofread. We also used it to debug code and understand errors in it.
