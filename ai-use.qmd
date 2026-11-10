@@ -66,7 +66,7 @@ bestglm::bestglm(
 ```{r}
 partial1 <- lm(charges ~ . - age - bmi_group, data = insurance_data)
 partial2 <- lm(charges ~ . - sex - bmi_group, data = insurance_data)
-partial3<- lm(charges ~ . - bmi - bmi_group, data = insurance_data)
+partial3 <- lm(charges ~ . - bmi - bmi_group, data = insurance_data)
 partial4 <- lm(charges ~ . - children - bmi_group, data = insurance_data)
 partial5 <- lm(charges ~ . - smoker - bmi_group, data = insurance_data)
 partial6 <- lm(charges ~ . - region - bmi_group, data = insurance_data)
@@ -83,7 +83,8 @@ adj.r.squareds <- c(
 results.chart <- tibble(
     `Dropped Predictor` = c("Age", "Sex", "BMI", "Children", "Smoker", "Region"),
     `Drop in adjusted R^2` = glance(insurance_fit)$adj.r.squared - adj.r.squareds
-)
+) |> arrange(desc(`Drop in adjusted R^2`))
+   
 knitr::kable(results.chart)
 ```
 
