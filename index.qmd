@@ -31,13 +31,49 @@ library(vroom)
 # insurance.csv is from
 # https://www.kaggle.com/datasets/d3lhomi10/medical-cost-personal-dataset
 insurance_data <- vroom("insurance.csv")
-insurance_fit <- lm(charges ~ bmi + smoker, data = insurance_data)
+insurance_fit <- lm(charges ~ . - charges, data = insurance_data)
 summary(insurance_fit)
 ```
 
 ```{r}
 # Show a primary figure or table only if it helps answer the question.
 ggplot(data = insurance_data, aes(x = age, y = charges, color = smoker)) + geom_point()
+
+
+insurance_data$bmi_group <- cut(
+  insurance_data$bmi,
+  breaks = c(0, 25, 30, Inf),
+  labels = c("Normal", "Overweight", "Obese")
+)
+
+# A graph that explains the possible difference
+# ggplot(insurance_data, aes(age, charges, color = bmi_group)) +
+#   facet_wrap(~ smoker) +
+#   geom_point(alpha = 0.6)
+
+# This graph does the same as the one above, but splits the data based on BMI
+# group and smoker-status. We can see a clearer trend, but there are still
+# many individuals who have insurance charges above the line of best fit.
+ggplot(insurance_data, aes(x = age, y = charges)) +
+    geom_point(alpha = 0.4) +
+    geom_smooth(method = "lm", se = FALSE) +
+    facet_grid(
+        rows = vars(smoker),
+        cols = vars(bmi_group),
+        labeller = labeller(
+            smoker = c("yes" = "Smokers", "no" = "Nonsmokers"),
+            bmi_group = c(
+                "Normal" = "Normal BMI",
+                "Overweight" = "Overweight BMI",
+                "Obese" = "Obese BMI"
+                )
+        )
+    ) + 
+    labs(
+    title = "Insurance Charges by Age, BMI, and Smoking Status",
+    x = "Age",
+    y = "Insurance Charges"
+  )
 ```
 
 ## Going beyond the baseline
