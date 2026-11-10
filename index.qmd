@@ -30,8 +30,8 @@ library(tidyverse)
 library(vroom)
 # insurance.csv is from
 # https://www.kaggle.com/datasets/d3lhomi10/medical-cost-personal-dataset
-insurance_data <- vroom("insurance.csv")
-insurance_fit <- lm(charges ~ . - charges, data = insurance_data)
+insurance_data <- vroom("insurance.csv") |> mutate(across(c(sex, smoker, region), as.factor))
+insurance_fit <- lm(charges ~ ., data = insurance_data)
 summary(insurance_fit)
 ```
 
@@ -40,11 +40,11 @@ summary(insurance_fit)
 ggplot(data = insurance_data, aes(x = age, y = charges, color = smoker)) + geom_point()
 
 
-insurance_data$bmi_group <- cut(
+insurance_data$bmi_group <- as.factor(cut(
   insurance_data$bmi,
   breaks = c(0, 25, 30, Inf),
   labels = c("Normal", "Overweight", "Obese")
-)
+))
 
 # A graph that explains the possible difference
 # ggplot(insurance_data, aes(age, charges, color = bmi_group)) +
@@ -53,7 +53,11 @@ insurance_data$bmi_group <- cut(
 
 # This graph does the same as the one above, but splits the data based on BMI
 # group and smoker-status. We can see a clearer trend, but there are still
-# many individuals who have insurance charges above the line of best fit.
+# many individuals who have insurance charges above the line of best fit. It 
+# seems like all of the obese smokers belong to the group above the rest of the 
+# individuals, but that doesn't explain all of the individuals above the line of 
+# best fit who are nonsmokers.
+
 ggplot(insurance_data, aes(x = age, y = charges)) +
     geom_point(alpha = 0.4) +
     geom_smooth(method = "lm", se = FALSE) +
@@ -76,6 +80,8 @@ ggplot(insurance_data, aes(x = age, y = charges)) +
   )
 ```
 
+It is clear from these plots that healthcare charges increase with age, and that smokers generally spend more per year for healthcare. BMI doesn't seem to have as much of an effect as expected, however it seems to have an interaction with smoking status. Healthcare costs seem to stay mostly the same as BMI increases except for the group of individuals who are smokers and obese. Smokers in the normal and overweight BMI categories seem to be charged about $15000 more per year across the age levels recorded, but obese smokers are charged about $35000 more on average across all age levels. 
+
 ## Going beyond the baseline
 
 **Use two STAT 330 method families. Give each part a descriptive heading that states the question or finding, not an assignment label. Explain why you chose each method, how you checked it, and what it adds to the answer.**
@@ -85,17 +91,19 @@ ggplot(insurance_data, aes(x = age, y = charges)) +
 **Present one method and its most useful evidence.**
 
 ```{r}
-# Analysis code for this part.
+# fit a model with interactions
 ```
+
 
 ### Replace with another question or finding
 
 **Present a method from a different family and its most useful evidence. Combine this with the preceding subsection if that creates a clearer story.**
-
+Which predictors matter most to prediction?
 ```{r}
-# Analysis code for this part.
+# Use a shrinkage method to select from our variables
 ```
 
+**** This should flow nicely into the AI extension
 ## A new direction with AI
 
 **Explain the need revealed by your preliminary course-based work, the extension you implemented with AI support, and what it contributes to the same research question. Show its substantive result on this page and summarize your independent checks. If the extension is an untaught comparator, evaluate it against the core course-based model. Link to the AI-use record instead of placing a transcript here.**
@@ -299,7 +307,7 @@ ggplot(
   theme_minimal()
 ```
 
-Details are in the [AI-use record](ai-use.qmd).
+Details are in the [AI-use record](ai-use.qmd). 
 
 ## What this means
 

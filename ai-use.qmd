@@ -12,7 +12,7 @@ This page is a work log, not a second report. Short bullets are welcome. It is s
 
 **Before using AI for the required extension, briefly state your question, course-based core model, baseline result, and the specific limitation or opportunity you wanted to address.**
 
-****we probably should do this before submitting ^^^
+> Our question is how is the amount spent on healthcare related to age, sex, BMI, number of children, smoking status, and region of the United States you life in? We are using a multiple linear regression model. The baseline result is that smoking, BMI, number of children, and age all are associated with significant changes in yearly healthcare charges. We wanted to see which predictors were the most important in predicting healthcare charges. Though we could use a best-subsets selection or use the VIFs of each variable to get an idea of which matters most, we wanted to directly compare each variable's importance on the same baseline. A model selection search will tell us which variables should be included, but not rank and measure their importance. 
 
 ## Substantive prompts
 
@@ -33,13 +33,51 @@ Paste the exact prompts that shaped the extension. Include the customized extens
 - **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong?
 ****these things too maybe^^^^
 **Connection to the final case study:** Identify where the extension's method and result appear on the final page and how they strengthen the course-based analysis.
+Our extension is in the section labeled "A new direction with AI" on the main report page. 
 
 ## Independent verification
 
-1. **Check and result:** Replace with an official source, diagnostic, simulation, manual calculation, comparison with a known method, or another suitable check.
-2. **Check and result:** Replace with a different check and what you learned.
+1. If our extension shows that smoking, age, and BMI are significantly more important than the other predictors, than a LASSO shrinkage should reasonably select those same predictors. 
+```{r}
+library(glmnet)
+# make a model matrix and remove the intercept column
+x <- model.matrix(charges ~ . - bmi_group, data = insurance_data)[, -1]
+y <- insurance_data$charges
 
-Link or cite verification sources where appropriate. A second AI response does not count as independent verification.
+# do a lasso regression (alpha = 1)
+lasso <- cv.glmnet(x, y, family = "gaussian", alpha = 1)
+coef(lasso)
+```
+
+This lasso regression keeps the coefficients for `age`, `bmi`, and `smoker`. This checks that the AI's importance ranking is correct. The LASSO regression also gave `smoker` the largest coefficient, which matches the AI response that `smoker` is the most important coefficient. However, this check also shows why a LASSO regression or other model selection method is not sufficient for ranking the importance of coefficients, because `age` and `bmi` are given almost the same final coefficient whereas the actual importance ranking puts `age` significantly above `bmi`. Because the coefficients are not all on the same scale, we cannot simply compare them to see which matters most for prediction, though `smoker` being much larger than `age` and `bmi` points towards it being the most important coefficient. 
+
+2. We can use $R^2$ to explore which variables are the most important. We can fit partial models, each one dropping one of our predictors, and see how much the $R^2$ drops when we drop each variable. 
+
+```{r}
+partial1 <- lm(charges ~ . - age - bmi_group, data = insurance_data)
+partial2 <- lm(charges ~ . - sex - bmi_group, data = insurance_data)
+partial3<- lm(charges ~ . - bmi - bmi_group, data = insurance_data)
+partial4 <- lm(charges ~ . - children - bmi_group, data = insurance_data)
+partial5 <- lm(charges ~ . - smoker - bmi_group, data = insurance_data)
+partial6 <- lm(charges ~ . - region - bmi_group, data = insurance_data)
+
+adj.r.squareds <- c(
+    glance(partial1)$adj.r.squared,
+    glance(partial2)$adj.r.squared,
+    glance(partial3)$adj.r.squared,
+    glance(partial4)$adj.r.squared,
+    glance(partial5)$adj.r.squared,
+    glance(partial6)$adj.r.squared
+)
+
+r.squareds <- tibble(
+    model = c("Age", "Sex", "BMI", "Children", "Smoker", "Region"),
+    adj.r.squared.delta = glance(insurance_fit)$adj.r.squared - adj.r.squareds
+)
+knitr::kable(r.squareds)
+```
+
+This table lists the change in adjusted $R^2$, where a positive number means a drop in adjusted $R^2$. Omitting each of the variables caused a drop in $R^2$ except for sex, however the drop due to omitting region, children, and sex were all very small (<.003). This also reinforces the AI work, showing that age, BMI, and especially smoker have a significant impact on the predictions. $R^2$ is also nice because it is quantifiable. The change in $R^2$ is the change in the percentage of variation that the model explains. So, we can see that removing `smoker` causes the amount of variation explained to drop by nearly 63%, removing `age` and `bmi` cause the amount of explained variation to drop by about 9% and 3% respectively, while removing `sex`, `children`, or `region` only cause a drop of less than .3% each, or even an increase in the case of `sex`. 
 
 ## Remaining limitation
 
@@ -49,4 +87,4 @@ Link or cite verification sources where appropriate. A second AI response does n
 
 **Briefly disclose earlier debugging, proofreading, or other AI assistance. Write “None” if there was no other use.**
 
-We used AI to proofread. We also used it to debug code and understand errors in it.
+We used AI to proofread. We also used it to debug code and understand errors in it. We also used it to help with the coding where appropriate, i.e. remembering how to code a lasso regression in R, how to make plots look nicer, etc. 
