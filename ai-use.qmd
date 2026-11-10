@@ -30,7 +30,7 @@ Paste the exact prompts that shaped the extension. Include the customized extens
 
 - **Accepted:** What useful advice did you use? We used ChatGPT's advice for what extension may work well. We used the most of the advice it had for implementation and the code it gave us to create the permutation importance feature. We used the graphic and simulation it made to create the permutation feature.
 - **Changed:** We adapted the code to be functional and relevant to our model. We added units to our graphics.
-- **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong? There was a bug in the code ChatGPT generated for us; it had used the keyword `repeat` as a variable name, which created in syntax error. It created two "independent checks" for us as well, which we did not use because it would not be independent if we were to use them. 
+- **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong? There was a bug in the code ChatGPT generated for us; it had used the keyword `repeat` as a variable name, which created in syntax error. It created two "independent checks" for us as well, which we did not use because our checks would not be independent if we were to use them. 
 
 **Connection to the final case study:** Identify where the extension's method and result appear on the final page and how they strengthen the course-based analysis.
 Our extension is in the section labeled "A new direction with AI" on the main report page. 
